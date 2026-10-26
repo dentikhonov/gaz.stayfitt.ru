@@ -1,0 +1,433 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Погладь генерального</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Dela+Gothic+One&family=Onest:wght@400;600;800&family=Neucha&display=swap">
+<style>
+/* Layout: one stage — photo in a tilted manga panel, speech bubble to the upper-left (he looks that way), purr-meter under it. Deliberate single sakura look. */
+:root {
+  --sakura: #ffe3ec;
+  --sakura-deep: #ffc2d6;
+  --ink: #2a1630;
+  --ink-soft: #6b4a6e;
+  --hot: #ff3d7f;
+  --gas: #3b5bff;
+  --paper: #fffafc;
+  --blush: rgba(255, 70, 120, .55);
+  --f-display: "Dela Gothic One", "Arial Black", system-ui, sans-serif;
+  --f-body: "Onest", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --f-hand: "Neucha", "Comic Sans MS", cursive;
+  color-scheme: light;
+}
+html, body { height: 100%; }
+body {
+  background:
+    radial-gradient(circle at 1px 1px, rgba(255, 61, 127, .16) 1.2px, transparent 1.6px) 0 0 / 14px 14px,
+    var(--sakura);
+  color: var(--ink);
+  font-family: var(--f-body);
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-block: 20px 32px;
+  overflow-x: hidden;
+}
+.wrap { max-width: 920px; margin: 0 auto; display: grid; gap: 22px; }
+
+header { display: grid; gap: 6px; }
+.jp { font-family: var(--f-display); color: var(--hot); font-size: 15px; letter-spacing: .3em; }
+h1 {
+  font-family: var(--f-display); font-weight: 400; margin: 0;
+  font-size: clamp(34px, 8vw, 78px); line-height: .95; letter-spacing: -.01em;
+  text-wrap: balance;
+}
+h1 .gas {
+  color: var(--paper); background: var(--gas); padding: 0 .18em; display: inline-block;
+  transform: rotate(-3deg); box-shadow: 5px 5px 0 var(--ink);
+}
+.lead { margin: 0; color: var(--ink-soft); font-size: 16px; max-width: 58ch; }
+
+.main { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); gap: 26px; align-items: start; }
+@media (max-width: 760px) { .main { grid-template-columns: minmax(0, 1fr); } }
+
+/* Stage */
+.stage { position: relative; padding-top: 70px; }
+.panel {
+  position: relative; aspect-ratio: 1; max-width: 100%;
+  border: 4px solid var(--ink); background: var(--paper);
+  box-shadow: 10px 10px 0 var(--ink);
+  transform: rotate(-1.5deg); overflow: hidden;
+  touch-action: none; user-select: none; -webkit-user-select: none;
+  cursor: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='40' height='40' viewBox='0 0 40 40'><g fill='%23ff3d7f' stroke='%232a1630' stroke-width='2'><ellipse cx='20' cy='26' rx='9' ry='8'/><circle cx='9' cy='15' r='4'/><circle cx='16' cy='9' r='4'/><circle cx='24' cy='9' r='4'/><circle cx='31' cy='15' r='4'/></g></svg>") 20 20, grab;
+}
+.photo {
+  position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: block;
+  transform-origin: 50% 80%; transition: transform .25s ease-out, filter .4s;
+  pointer-events: none;
+}
+.panel.purring .photo { animation: purr .09s linear infinite alternate; }
+@keyframes purr { from { transform: translate(-.6px, .3px) scale(1.012); } to { transform: translate(.6px, -.3px) scale(1.016); } }
+.panel.bliss .photo { filter: saturate(1.15) brightness(1.04); }
+
+.blush { position: absolute; left: 31%; top: 46%; width: 15%; height: 8%; opacity: 0; transition: opacity .5s; pointer-events: none; }
+.blush::before { content: ""; position: absolute; inset: 0; border-radius: 50%; background: var(--blush); filter: blur(6px); }
+.blush::after {
+  content: ""; position: absolute; inset: 22% 18%;
+  background: repeating-linear-gradient(115deg, transparent 0 6px, rgba(200, 20, 70, .7) 6px 8px);
+}
+.panel.bliss .blush { opacity: 1; }
+
+.speedlines {
+  position: absolute; inset: -30%; pointer-events: none; opacity: 0; transition: opacity .4s;
+  background: repeating-conic-gradient(from 0deg at 50% 50%, rgba(255,255,255,.0) 0 4deg, rgba(255,255,255,.55) 4deg 5deg);
+  mask: radial-gradient(circle, transparent 38%, #000 70%);
+  -webkit-mask: radial-gradient(circle, transparent 38%, #000 70%);
+}
+.panel.ultra .speedlines { opacity: 1; animation: spin 6s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+
+.hint {
+  position: absolute; left: 50%; bottom: 14px; transform: translateX(-50%);
+  background: var(--ink); color: var(--paper); font-family: var(--f-hand); font-size: 18px;
+  padding: 6px 14px; border-radius: 999px; white-space: nowrap; pointer-events: none; transition: opacity .4s;
+}
+.panel.touched .hint { opacity: 0; }
+
+/* Speech bubble */
+.bubble {
+  position: absolute; left: 0; top: 0; z-index: 3; max-width: min(78%, 360px);
+  background: var(--paper); border: 3px solid var(--ink); border-radius: 26px;
+  padding: 12px 18px; font-family: var(--f-display); font-size: clamp(18px, 3.4vw, 26px); line-height: 1.15;
+  box-shadow: 5px 5px 0 var(--ink);
+  transform-origin: 30% 100%; transform: scale(.0); transition: transform .28s cubic-bezier(.3,1.6,.5,1);
+}
+.bubble.show { transform: scale(1) rotate(-2deg); }
+.bubble::after {
+  content: ""; position: absolute; left: 34%; bottom: -19px; width: 26px; height: 22px;
+  background: var(--paper); border-right: 3px solid var(--ink); border-bottom: 3px solid var(--ink);
+  transform: skewX(-35deg) rotate(12deg); border-bottom-right-radius: 6px;
+}
+.bubble small { display: block; font-family: var(--f-hand); font-size: 15px; color: var(--ink-soft); margin-top: 4px; }
+
+/* particles */
+.fx { position: fixed; inset: 0; pointer-events: none; z-index: 20; overflow: hidden; }
+.p { position: absolute; font-family: var(--f-display); white-space: nowrap; will-change: transform, opacity; animation: float 1.3s ease-out forwards; }
+.p.heart { color: var(--hot); font-size: 22px; }
+.p.mur { color: var(--ink); font-family: var(--f-hand); font-size: 20px; }
+.p.gas { color: var(--gas); font-size: 34px; text-shadow: 3px 3px 0 var(--ink); }
+@keyframes float {
+  0% { transform: translate(-50%, -50%) scale(.6); opacity: 0; }
+  15% { opacity: 1; transform: translate(-50%, -70%) scale(1.1); }
+  100% { transform: translate(calc(-50% + var(--dx)), calc(-50% - 110px)) scale(.9) rotate(var(--rot)); opacity: 0; }
+}
+
+/* Side panel */
+.side { display: grid; gap: 16px; }
+.card { background: var(--paper); border: 3px solid var(--ink); padding: 16px; box-shadow: 6px 6px 0 var(--ink); display: grid; gap: 12px; }
+.label { font-size: 12px; letter-spacing: .14em; text-transform: uppercase; font-weight: 800; color: var(--ink-soft); }
+.meter { height: 26px; border: 3px solid var(--ink); background: var(--sakura); position: relative; overflow: hidden; }
+.meter i {
+  position: absolute; inset: 0 auto 0 0; width: 0%;
+  background: repeating-linear-gradient(-45deg, var(--hot) 0 10px, #ff6b9d 10px 20px);
+  transition: width .15s linear;
+}
+.level { font-family: var(--f-display); font-size: 26px; line-height: 1; }
+.level-sub { font-family: var(--f-hand); font-size: 17px; color: var(--ink-soft); margin-top: -6px; }
+.stats { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.stat b { display: block; font-family: var(--f-display); font-size: 30px; font-weight: 400; font-variant-numeric: tabular-nums; }
+.stat span { font-size: 13px; color: var(--ink-soft); }
+
+.btns { display: grid; gap: 10px; }
+button {
+  font: inherit; font-weight: 800; font-size: 16px; cursor: pointer;
+  border: 3px solid var(--ink); background: var(--paper); color: var(--ink);
+  padding: 12px 14px; box-shadow: 4px 4px 0 var(--ink); text-align: left;
+  display: flex; justify-content: space-between; align-items: center; gap: 10px;
+  transition: transform .08s, box-shadow .08s, background .2s;
+}
+button:active { transform: translate(3px, 3px); box-shadow: 1px 1px 0 var(--ink); }
+button:focus-visible { outline: 3px solid var(--gas); outline-offset: 3px; }
+button[aria-pressed="true"] { background: var(--hot); color: var(--paper); }
+button.gas-btn { background: var(--gas); color: var(--paper); font-family: var(--f-display); font-weight: 400; font-size: 22px; letter-spacing: .04em; }
+button .k { font-family: var(--f-hand); font-weight: 400; font-size: 15px; opacity: .85; }
+
+.note { font-size: 13px; color: var(--ink-soft); margin: 0; }
+footer { font-family: var(--f-hand); font-size: 16px; color: var(--ink-soft); text-align: center; }
+
+@media (prefers-reduced-motion: reduce) {
+  .panel.purring .photo, .panel.ultra .speedlines { animation: none; }
+  .p { animation-duration: .01s; }
+}
+</style>
+
+<div class="wrap">
+  <header>
+    <div class="jp">社長をなでて · ГЛАДЬ СЭМПАЯ</div>
+    <h1>Погладь <span class="gas">генерального</span></h1>
+    <p class="lead">Води мышкой по фото (на телефоне — пальцем). Чем дольше гладишь, тем громче мурчит. Включи звук, он ещё и разговаривает.</p>
+  </header>
+
+  <div class="main">
+    <div class="stage">
+      <div class="bubble" id="bubble" aria-live="polite"></div>
+      <div class="panel" id="panel" role="img" aria-label="Фото генерального, его можно гладить">
+        <img class="photo" id="photo" alt="" src="photo.jpg">
+        <div class="blush"></div>
+        <div class="speedlines"></div>
+        <div class="hint">гладь меня~ ✦</div>
+      </div>
+    </div>
+
+    <aside class="side">
+      <div class="card">
+        <div class="label">Мурчометр</div>
+        <div class="meter"><i id="bar"></i></div>
+        <div class="level" id="level">Деловой</div>
+        <div class="level-sub" id="levelSub">сидит на созвоне, не трогать</div>
+      </div>
+
+      <div class="card stats">
+        <div class="stat"><b id="strokes">0</b><span>поглаживаний</span></div>
+        <div class="stat"><b id="phrases">0</b><span>каваи-фраз</span></div>
+      </div>
+
+      <div class="btns">
+        <button id="soundBtn" type="button" aria-pressed="false">Включить звук и голос <span class="k">мур + озвучка</span></button>
+        <button id="gasBtn" class="gas-btn" type="button">ГАЗ! <span class="k">ня</span></button>
+      </div>
+      <p class="note" id="voiceNote">Каваи-фразы озвучивает нейроголос, мужские реплики говорит сэмпай с японским акцентом.</p>
+    </aside>
+  </div>
+
+  <footer>внутренний мем · мурчит на чистом Web Audio, говорит нейроголосом</footer>
+</div>
+
+<div class="fx" id="fx"></div>
+
+<script>
+(() => {
+  const PHRASES = [
+    ["Охаёшечки!", "доброе утречко, команда"],
+    ["Датебаёшечки!", "план выполним, даттебайо"],
+    ["Аригатошечки~", "спасибо за поглаживание"],
+    ["Ня~", ""],
+    ["Мур-мур-мур…", "не останавливайся"],
+    ["Каваи десу нэ~", ""],
+    ["Сугоооой!", "метрики растут"],
+    ["Ара-ара~", "кто это тут гладит"],
+    ["Нани?!", "кто трогал прод"],
+    ["Омаэ ва моу… уволен. Шучу, ня!", ""],
+    ["Сэмпай заметил тебя!", "+1 к премии (нет)"],
+    ["Уву~", ""],
+    ["Газуем, ня!", "дедлайн вчера"],
+    ["Ути-пути, синергия~", ""],
+    ["Ямэро, щекотно!", ""],
+    ["Ичи, ни, сан… ГАЗ!", ""],
+    ["Пасибки-шмасибки!", ""],
+    ["Йоу, ребятки, стендап через пять минуточек~", ""],
+    ["Кавайный квартал, ня!", "выручка мурчит"],
+    ["Бака! Кто деплоит в пятницу?!", ""],
+    ["Моя сила уровня больше девяти тысяч!", ""],
+    ["Ня-ня, одобряю бюджет~", ""],
+    ["Мимими, какой ты молодец!", ""],
+    ["Ещё! Ещё гладь!", ""]
+  ];
+  const GAS = [["ГАЗ!", ""], ["ГАЗ! ГАЗ! ГАЗ!", "в пол, ня"], ["Газ-газ-газ, сэмпай!", ""], ["ГАЗУЕЕЕМ!", ""]];
+  const LEVELS = [
+    [0,   "Деловой", "сидит на созвоне, не трогать"],
+    [.15, "Подобрел", "кажется, улыбнулся"],
+    [.35, "Мурлычет", "мур-мур-режим включён"],
+    [.55, "Ня-режим", "щёчки порозовели"],
+    [.75, "Сэмпай доволен", "одобрит любой отпуск"],
+    [.92, "ULTRA KAWAII", "газ в пол, ня!"]
+  ];
+
+  const $ = id => document.getElementById(id);
+  const panel = $("panel"), bubble = $("bubble"), fx = $("fx"), bar = $("bar");
+  let meter = 0, strokes = 0, said = 0, dist = 0, lastSay = 0, lastLevel = 0;
+  let last = null, soundOn = false, bubbleTimer = null, lastP = null;
+
+  /* ---------- Audio: synthesized purr ---------- */
+  let ctx = null, purrGain = null, voiceBus = null, echo = null, speakingUntil = 0;
+  function initAudio() {
+    if (ctx) { ctx.resume && ctx.resume(); return; }
+    try {
+      ctx = new (window.AudioContext || window.webkitAudioContext)();
+      const len = ctx.sampleRate * 2, buf = ctx.createBuffer(1, len, ctx.sampleRate), d = buf.getChannelData(0);
+      let b = 0; for (let i = 0; i < len; i++) { b = (b + .02 * (Math.random() * 2 - 1)) / 1.02; d[i] = b * 3.5; }
+      const noise = ctx.createBufferSource(); noise.buffer = buf; noise.loop = true;
+      const lp = ctx.createBiquadFilter(); lp.type = "lowpass"; lp.frequency.value = 220; lp.Q.value = 4;
+      const amp = ctx.createGain(); amp.gain.value = .5;
+      const lfo = ctx.createOscillator(); lfo.frequency.value = 24;
+      const lfoDepth = ctx.createGain(); lfoDepth.gain.value = .5;
+      lfo.connect(lfoDepth).connect(amp.gain);
+      const rumble = ctx.createOscillator(); rumble.type = "triangle"; rumble.frequency.value = 48;
+      const rumbleG = ctx.createGain(); rumbleG.gain.value = .25;
+      rumble.connect(rumbleG).connect(amp);
+      purrGain = ctx.createGain(); purrGain.gain.value = 0;
+      noise.connect(lp).connect(amp).connect(purrGain).connect(ctx.destination);
+      noise.start(); lfo.start(); rumble.start();
+      voiceBus = ctx.createGain(); voiceBus.gain.value = 1; voiceBus.connect(ctx.destination);
+      echo = ctx.createDelay(1); echo.delayTime.value = .17;
+      const fb = ctx.createGain(); fb.gain.value = .33;
+      echo.connect(fb).connect(echo); echo.connect(voiceBus);
+    } catch (e) { ctx = null; }
+  }
+
+  /* ---------- Voice: neural clips from voice/ (tools/gen_voice.py), browser TTS as fallback ---------- */
+  let clips = null, pending = null, curClip = null;
+  const clipBufs = {};
+  function loadClips() {
+    if (clips !== null || !ctx) return;
+    clips = {};
+    fetch("voice/voice.json").then(r => r.json()).then(map => {
+      clips = map;
+      Object.keys(map).forEach(text =>
+        fetch("voice/" + map[text]).then(r => r.arrayBuffer())
+          .then(b => new Promise((ok, no) => ctx.decodeAudioData(b, ok, no)))
+          .then(buf => {
+            clipBufs[text] = buf;
+            if (pending && pending.text === text && performance.now() - pending.t < 1500) playClip(text, pending.loud);
+          }).catch(() => {}));
+    }).catch(() => { clips = false; });
+  }
+  function playClip(text, loud) {
+    pending = null;
+    try { speechSynthesis.cancel(); } catch (e) {}
+    if (curClip) try { curClip.stop(); } catch (e) {}
+    const src = ctx.createBufferSource(); src.buffer = clipBufs[text];
+    src.connect(voiceBus);
+    if (loud) { const send = ctx.createGain(); send.gain.value = .5; src.connect(send).connect(echo); }
+    src.start();
+    curClip = src;
+    speakingUntil = ctx.currentTime + src.buffer.duration;
+  }
+
+  let voice = null;
+  function pickVoice() {
+    try {
+      const vs = speechSynthesis.getVoices();
+      voice = vs.find(v => /ru/i.test(v.lang) && /female|milena|алёна|alena|irina|google/i.test(v.name))
+           || vs.find(v => /ru/i.test(v.lang)) || null;
+    } catch (e) {}
+  }
+  if ("speechSynthesis" in window) { pickVoice(); speechSynthesis.onvoiceschanged = pickVoice; }
+
+  function speak(text, loud) {
+    if (!soundOn) return;
+    if (ctx && clipBufs[text]) return playClip(text, loud);
+    // clip is still loading: wait for it instead of blurting out the robot voice
+    if (ctx && clips !== false && (clips === null || Object.keys(clips).length === 0 || clips[text])) {
+      pending = { text, loud, t: performance.now() }; return;
+    }
+    if (!("speechSynthesis" in window)) return;
+    try {
+      speechSynthesis.cancel();
+      const u = new SpeechSynthesisUtterance(text.replace(/[~…]/g, "").replace(/!+/g, "!"));
+      u.lang = "ru-RU"; if (voice) u.voice = voice;
+      u.pitch = loud ? 1.3 : 1.9; u.rate = loud ? 1.15 : 1.05; u.volume = 1;
+      speechSynthesis.speak(u);
+    } catch (e) {}
+  }
+
+  /* ---------- UI ---------- */
+  function say(pair, loud) {
+    const [text, sub] = pair;
+    bubble.innerHTML = "";
+    bubble.append(text);
+    if (sub) { const s = document.createElement("small"); s.textContent = sub; bubble.append(s); }
+    bubble.classList.remove("show"); void bubble.offsetWidth; bubble.classList.add("show");
+    clearTimeout(bubbleTimer); bubbleTimer = setTimeout(() => bubble.classList.remove("show"), 2600);
+    speak(text, loud);
+    said++; $("phrases").textContent = said;
+    lastSay = performance.now();
+  }
+  const rnd = a => a[Math.floor(Math.random() * a.length)];
+  let deck = [];
+  const nextPhrase = () => { if (!deck.length) deck = PHRASES.slice().sort(() => Math.random() - .5); return deck.pop(); };
+
+  function spawn(x, y, kind, text) {
+    const el = document.createElement("span");
+    el.className = "p " + kind; el.textContent = text;
+    el.style.left = x + "px"; el.style.top = y + "px";
+    el.style.setProperty("--dx", (Math.random() * 120 - 60) + "px");
+    el.style.setProperty("--rot", (Math.random() * 40 - 20) + "deg");
+    fx.append(el); setTimeout(() => el.remove(), 1350);
+  }
+
+  function setLevel() {
+    let idx = 0; LEVELS.forEach((l, i) => { if (meter >= l[0]) idx = i; });
+    $("level").textContent = LEVELS[idx][1]; $("levelSub").textContent = LEVELS[idx][2];
+    panel.classList.toggle("purring", meter > .2);
+    panel.classList.toggle("bliss", meter > .5);
+    panel.classList.toggle("ultra", meter > .92);
+    if (idx > lastLevel && idx >= 2) {
+      if (idx === LEVELS.length - 1) say(rnd(GAS), true);
+      else if (performance.now() - lastSay > 900) say(nextPhrase());
+    }
+    lastLevel = idx;
+  }
+
+  function pet(e) {
+    const r = panel.getBoundingClientRect();
+    if (e.pointerType !== "mouse" && e.buttons === 0) { last = null; return; }
+    const p = { x: e.clientX, y: e.clientY };
+    if (last) {
+      const d = Math.hypot(p.x - last.x, p.y - last.y);
+      if (d < 120) {
+        dist += d;
+        meter = Math.min(1, meter + d * 0.0011);
+        if (dist > 160) {
+          dist = 0; strokes++; $("strokes").textContent = strokes;
+          spawn(p.x, p.y, Math.random() < .6 ? "heart" : "mur", Math.random() < .6 ? rnd(["♥", "♡", "✦"]) : rnd(["мур", "ня~", "мрр"]));
+          if (strokes % 7 === 0 && performance.now() - lastSay > 2400) say(nextPhrase());
+        }
+      }
+    }
+    last = p; lastP = p;
+    panel.classList.add("touched");
+    const tilt = ((p.x - r.left) / r.width - .5) * 4;
+    $("photo").style.setProperty("transform", panel.classList.contains("purring") ? "" : `rotate(${tilt}deg) scale(1.02)`);
+  }
+
+  panel.addEventListener("pointermove", pet);
+  panel.addEventListener("pointerdown", e => { initAudio(); last = { x: e.clientX, y: e.clientY }; try { panel.setPointerCapture(e.pointerId); } catch (_) {} });
+  panel.addEventListener("pointerup", () => { last = null; });
+  panel.addEventListener("pointerleave", () => { last = null; $("photo").style.transform = ""; });
+  panel.addEventListener("click", e => {
+    if (meter < .1) { say(["Нани?!", "кто тут тыкает"]); spawn(e.clientX, e.clientY, "heart", "!?"); }
+  });
+
+  $("soundBtn").addEventListener("click", () => {
+    soundOn = !soundOn;
+    $("soundBtn").setAttribute("aria-pressed", soundOn);
+    $("soundBtn").firstChild.textContent = soundOn ? "Звук включён " : "Включить звук и голос ";
+    if (soundOn) { initAudio(); loadClips(); say(["Охаёшечки!", "звук включён, гладь"]); }
+    else { pending = null; try { speechSynthesis.cancel(); } catch (e) {} if (curClip) try { curClip.stop(); } catch (e) {} }
+  });
+
+  $("gasBtn").addEventListener("click", e => {
+    initAudio();
+    meter = Math.min(1, meter + .25);
+    say(rnd(GAS), true);
+    const r = panel.getBoundingClientRect();
+    for (let i = 0; i < 6; i++) setTimeout(() =>
+      spawn(r.left + r.width * (.2 + Math.random() * .6), r.top + r.height * (.3 + Math.random() * .5), "gas", "ГАЗ!"), i * 70);
+  });
+
+  /* ---------- Loop ---------- */
+  let prev = performance.now();
+  (function tick(t) {
+    const dt = Math.min(.1, (t - prev) / 1000); prev = t;
+    meter = Math.max(0, meter - dt * (meter > .9 ? .05 : .09));
+    bar.style.width = (meter * 100).toFixed(1) + "%";
+    if (purrGain && ctx) purrGain.gain.setTargetAtTime(soundOn ? Math.min(.9, meter * 1.1) * (ctx.currentTime < speakingUntil ? .3 : 1) : 0, ctx.currentTime, .12);
+    setLevel();
+    requestAnimationFrame(tick);
+  })(prev);
+
+  setTimeout(() => say(["Охаёшечки!", "погладь меня, сэмпай"]), 600);
+})();
+</script>
+
+</body></html>
