@@ -34,16 +34,17 @@ body {
 }
 .wrap { max-width: 920px; margin: 0 auto; display: grid; gap: 22px; }
 
-header { display: grid; gap: 6px; }
+header { display: grid; gap: 10px; }
 .jp { font-family: var(--f-display); color: var(--hot); font-size: 15px; letter-spacing: .3em; }
 h1 {
   font-family: var(--f-display); font-weight: 400; margin: 0;
-  font-size: clamp(34px, 8vw, 78px); line-height: .95; letter-spacing: -.01em;
+  font-size: clamp(34px, 8vw, 78px); line-height: 1.05; letter-spacing: -.01em;
   text-wrap: balance;
 }
 h1 .gas {
   color: var(--paper); background: var(--gas); padding: 0 .18em; display: inline-block;
   transform: rotate(-3deg); box-shadow: 5px 5px 0 var(--ink);
+  margin: .12em 0 .2em; /* rotated box sticks out of the line box — keep it off the lead text */
 }
 .lead { margin: 0; color: var(--ink-soft); font-size: 16px; max-width: 58ch; }
 
@@ -154,13 +155,36 @@ button .k { font-family: var(--f-hand); font-weight: 400; font-size: 15px; opaci
 .note { font-size: 13px; color: var(--ink-soft); margin: 0; }
 footer { font-family: var(--f-hand); font-size: 16px; color: var(--ink-soft); text-align: center; }
 
+/* Password gate */
+.gate { position: fixed; inset: 0; z-index: 50; display: grid; place-items: center; padding: 16px; }
+.gate form { width: min(100%, 360px); }
+.gate h2 { font-family: var(--f-display); font-weight: 400; font-size: 28px; margin: 0; }
+.gate input {
+  font: inherit; font-size: 18px; padding: 12px 14px; border: 3px solid var(--ink);
+  background: var(--sakura); color: var(--ink); width: 100%; box-sizing: border-box;
+}
+.gate input:focus-visible { outline: 3px solid var(--gas); outline-offset: 3px; }
+.gate .err { color: var(--hot); font-family: var(--f-hand); font-size: 17px; margin: 0; min-height: 1.2em; }
+.gate.shake form { animation: shake .35s; }
+@keyframes shake { 25% { transform: translateX(-8px); } 50% { transform: translateX(8px); } 75% { transform: translateX(-4px); } }
+
 @media (prefers-reduced-motion: reduce) {
   .panel.purring .photo, .panel.ultra .speedlines { animation: none; }
   .p { animation-duration: .01s; }
 }
 </style>
 
-<div class="wrap">
+<div class="gate" id="gate">
+  <form class="card" id="gateForm">
+    <div class="label">Только для своих</div>
+    <h2>Пароль, сэмпай?</h2>
+    <input id="gatePass" type="password" autocomplete="current-password" aria-label="Пароль" autofocus>
+    <p class="err" id="gateErr" aria-live="polite"></p>
+    <button type="submit">Войти <span class="k">ня</span></button>
+  </form>
+</div>
+
+<div class="wrap" id="app" hidden>
   <header>
     <div class="jp">社長をなでて · ГЛАДЬ СЭМПАЯ</div>
     <h1>Погладь <span class="gas">генерального</span></h1>
@@ -426,7 +450,26 @@ footer { font-family: var(--f-hand); font-size: 16px; color: var(--ink-soft); te
     requestAnimationFrame(tick);
   })(prev);
 
-  setTimeout(() => say(["Охаёшечки!", "погладь меня, сэмпай"]), 600);
+  /* ---------- Password gate (static hosting: this only keeps out casual visitors) ---------- */
+  const PASS_HASH = "d0a2ddd7634fc33d9d6e8668dbcb5112730a00bc420278f88ecae7e103f7a738";
+  async function sha256(s) {
+    const b = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(s));
+    return [...new Uint8Array(b)].map(x => x.toString(16).padStart(2, "0")).join("");
+  }
+  function unlock() {
+    $("gate").remove(); $("app").hidden = false;
+    setTimeout(() => say(["Охаёшечки!", "погладь меня, сэмпай"]), 600);
+  }
+  let saved = null; try { saved = localStorage.getItem("gaz-pass"); } catch (e) {}
+  if (saved === PASS_HASH) unlock();
+  $("gateForm").addEventListener("submit", async e => {
+    e.preventDefault();
+    const h = await sha256($("gatePass").value.trim());
+    if (h === PASS_HASH) { try { localStorage.setItem("gaz-pass", h); } catch (e) {} unlock(); return; }
+    $("gateErr").textContent = "Бака! Не тот пароль";
+    $("gate").classList.remove("shake"); void $("gate").offsetWidth; $("gate").classList.add("shake");
+    $("gatePass").select();
+  });
 })();
 </script>
 
